@@ -103,7 +103,17 @@ nav{font-size:.9rem;margin:.25rem 0 1rem}nav a{color:#1a5fb4}
 h1{font-size:1.5rem;margin:.5rem 0}h2{font-size:1.1rem;margin:2rem 0 .5rem}
 .tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.95rem}th,td{border:1px solid #ddd;padding:.4rem .5rem;text-align:left;vertical-align:top}th{background:#f5f5f5}
 ul{padding-left:1.25rem}li{margin:.25rem 0}.sub{margin:.25rem 0 0;color:#444}
-.mail{user-select:all}`;
+.mail{user-select:all}
+footer{max-width:40rem;margin:0 auto;padding:1rem 1rem 2.5rem;border-top:1px solid #ddd;font-size:.85rem;color:#555}footer p{margin:.15rem 0}`;
+
+// 🏢사업자 정보 바닥글(2026-09-29 · AGENT6 · CTO 17:3x) — 본인인증·PG 심사 담당이 «홈페이지 하단 사업자 정보»를 본다(MOBILE-OK FAQ 반려 사유).
+//   앱 정본(방침·약관 글)이 아니라 «이 사이트»의 표시라 여기에 둔다. 🔒모르는 값은 안 적는다 — 대표자명·주소·전화는 ✍️ 값이 오면 한 줄씩 더한다.
+const BIZ = [
+  ['상호', '에스에스일레븐'],
+  ['사업자등록번호', '223-12-94953'],
+  ['개인정보 보호책임자', '정상'],
+  ['문의', 'help@hibbangyong.com'],
+];
 
 function page({ title, lead, sections, other }) {
   return `<!doctype html>
@@ -124,6 +134,9 @@ ${STYLE}
 <p>${esc(lead)}</p>
 ${sections.map((s) => `<h2>${esc(`${s.n}. ${s.head}`)}</h2>\n${blocksHtml(s.blocks)}`).join('\n')}
 </main>
+<footer>
+${BIZ.map(([k, v]) => `<p>${esc(k)} ${esc(v)}</p>`).join('\n')}
+</footer>
 </body>
 </html>
 `;
