@@ -152,7 +152,8 @@ let bad = 0;
 for (const [f, html] of Object.entries(outputs)) {
   const p = path.join(ROOT, f);
   if (CHECK) {
-    const cur = existsSync(p) ? readFileSync(p, 'utf8') : '';
+    // 윈도 체크아웃은 CRLF 로 풀릴 수 있다(core.autocrlf) — 줄바꿈만 맞추고 글자는 그대로 댄다.
+    const cur = existsSync(p) ? readFileSync(p, 'utf8').replace(/\r\n/g, '\n') : '';
     if (cur !== html) { console.log(`✗ ${f} — 정본(${SHA})으로 새로 만든 것과 다르다`); bad++; }
     else console.log(`✓ ${f} — 정본 ${SHA} 과 한 글자도 안 다르다`);
   } else {
