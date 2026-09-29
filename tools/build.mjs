@@ -112,7 +112,7 @@ function page({ title, lead, sections, other }) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>하이빵용 ${esc(title)}</title>
-<!-- 생성물 · 손으로 고치지 말 것 · 정본 = kids-english-app ${SHA} src/content/*.ts · 시행일 ${esc(POLICY_VERSION)} · node tools/build.mjs -->
+<!-- 생성물 · 손으로 고치지 말 것 · 정본 = kids-english-app src/content/*.ts · 시행일 ${esc(POLICY_VERSION)} · node tools/build.mjs -->
 <style>
 ${STYLE}
 </style>
