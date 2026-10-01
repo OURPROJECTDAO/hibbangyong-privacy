@@ -1,3 +1,7 @@
+> 🔄 **2026-10-01 — 공개 주소가 옮겨졌다.** 방침 https://hibbangyong.com/privacy · 약관 /terms · 계정 삭제 /delete (저장소 `OURPROJECTDAO/hibbangyong-site` · Play 콘솔도 새 주소).
+> 이 저장소 `main` = **원본**(build.mjs 산출 ＋ delete.html) · `gh-pages` = 옛 주소를 새 주소로 보내는 **이동 페이지만**.
+> 🔴 갱신 순서 = `main` 에 build·push → hibbangyong-site 에서 `python tools/sync_policy.py` → 그 저장소 push. **gh-pages 에 전체 페이지를 다시 올리지 마라.**
+
 # hibbangyong-privacy
 
 하이빵용 개인정보처리방침(`index.html`) · 이용약관(`terms.html`) 공개 페이지.
