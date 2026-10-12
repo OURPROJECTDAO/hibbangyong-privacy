@@ -160,6 +160,10 @@ for (const [f, list] of Object.entries(want)) {
 }
 // 내부 표식이 새면 안 된다(옛 공개본의 «[정식 출시 전 법무 검토 · R2]» 류).
 for (const [f, html] of Object.entries(outputs)) if (html.includes('법무 검토')) throw new Error(`${f} 에 내부 표식`);
+// ✉️Cloudflare 이메일 주소 난독화 끄기(2026-10-12 · CTO) — 홈페이지가 Cloudflare 뒤로 가자 주소가 «[email protected]» ＋ email-decode 스크립트로 바뀌었다
+//   ⇒ 글자 대조 «뒤»에 주소마다 <!--email_off-->…<!--/email_off-->(Cloudflare 문서의 제외 표식 · 주석이라 화면·글자 0)
+const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+for (const f of Object.keys(outputs)) outputs[f] = outputs[f].replace(EMAIL, (m) => `<!--email_off-->${m}<!--/email_off-->`);
 
 let bad = 0;
 for (const [f, html] of Object.entries(outputs)) {
