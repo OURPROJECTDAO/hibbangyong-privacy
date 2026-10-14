@@ -55,7 +55,7 @@ function load(key) {
 }
 
 const { POLICY_VERSION } = load('constants/policy');
-const { POLICY, POLICY_TITLE, POLICY_LEAD } = load('content/privacy-v1');
+const { POLICY, POLICY_TITLE, POLICY_LEAD, POLICY_NOTICE = [] } = load('content/privacy-v1');   // 📢🆕10-15 «바뀌는 내용» 상자(앱 정본 POLICY_NOTICE · 옛 앱 판 = 없음 = 상자 0)
 const { TERMS, TERMS_TITLE, TERMS_LEAD } = load('content/terms-v1');
 if (!POLICY_VERSION || !Array.isArray(POLICY) || !Array.isArray(TERMS)) throw new Error('정본 값을 못 읽었다');
 
@@ -104,6 +104,8 @@ h1{font-size:1.5rem;margin:.5rem 0}h2{font-size:1.1rem;margin:2rem 0 .5rem}
 .tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.95rem}th,td{border:1px solid #ddd;padding:.4rem .5rem;text-align:left;vertical-align:top}th{background:#f5f5f5}
 ul{padding-left:1.25rem}li{margin:.25rem 0}.sub{margin:.25rem 0 0;color:#444}
 .mail{user-select:all}
+/* 📢10-15 «바뀌는 내용» 상자 */
+.notice{background:#fff7e0;border:1px solid #f0d58a;border-radius:.6rem;padding:.75rem 1rem;margin:0 0 1rem}.notice p{margin:.2rem 0}.notice b{font-size:1.02rem}.nw{white-space:nowrap}
 footer{max-width:40rem;margin:0 auto;padding:1rem 1rem 2.5rem;border-top:1px solid #ddd;font-size:.85rem;color:#555}footer p{margin:.15rem 0}`;
 
 // 🏢사업자 정보 바닥글(2026-09-29 · AGENT6 · CTO 17:3x) — 본인인증·PG 심사 담당이 «홈페이지 하단 사업자 정보»를 본다(MOBILE-OK FAQ 반려 사유).
@@ -115,7 +117,18 @@ const BIZ = [
   ['문의', 'help@hibbangyong.com'],
 ];
 
-function page({ title, lead, sections, other }) {
+/** 📢«바뀌는 내용» 상자 — 첫 줄 = 굵은 머리 · 나머지 = 문단 · «이전 방침 보기» = 같은 폴더 사본(privacy-2026-10-06.html · 이 저장소·홈페이지 둘 다 같은 이름). */
+const PREV_POLICY = 'privacy-2026-10-06.html';
+/** 날짜(YYYY-MM-DD)가 붙임표에서 줄바꿈되지 않게(10-15 폰 사진 «2026-/10-15») — 글자 대조는 이 감싸개를 걷고 잰다(아래 want). */
+const nwDates = (h) => h.replace(/\d{4}-\d{2}-\d{2}/g, (d) => `<span class="nw">${d}</span>`);
+function noticeHtml(lines) {
+  if (!Array.isArray(lines) || lines.length === 0) return '';
+  const [head, ...rest] = lines;
+  const nl = '\n';
+  return [`<aside class="notice">`, `<p><b>${nwDates(esc(head))}</b></p>`, ...rest.map((l) => `<p>${nwDates(esc(l))}</p>`), `<p><a href="${PREV_POLICY}">이전 방침 보기 ›</a></p>`, `</aside>`].join(nl);
+}
+
+function page({ title, lead, sections, other, notice = [] }) {
   return `<!doctype html>
 <html lang="ko">
 <head>
@@ -131,6 +144,7 @@ ${STYLE}
 <main>
 <h1>${esc(title)}</h1>
 <nav><a href="${other.href}">${esc(other.label)}</a></nav>
+${noticeHtml(notice)}
 <p>${esc(lead)}</p>
 ${sections.map((s) => `<h2>${esc(`${s.n}. ${s.head}`)}</h2>\n${blocksHtml(s.blocks)}`).join('\n')}
 </main>
@@ -143,7 +157,7 @@ ${BIZ.map(([k, v]) => `<p>${esc(k)} ${esc(v)}</p>`).join('\n')}
 }
 
 const outputs = {
-  'index.html': page({ title: POLICY_TITLE, lead: POLICY_LEAD, sections: POLICY, other: { href: 'terms.html', label: '이용약관 보기' } }),
+  'index.html': page({ title: POLICY_TITLE, lead: POLICY_LEAD, sections: POLICY, other: { href: 'terms.html', label: '이용약관 보기' }, notice: POLICY_NOTICE }),
   'terms.html': page({ title: TERMS_TITLE, lead: TERMS_LEAD, sections: TERMS, other: { href: './', label: '개인정보처리방침 보기' } }),
 };
 
@@ -153,9 +167,10 @@ function strings(sections) {
   for (const sec of sections) { s.push(sec.head); for (const b of sec.blocks) for (const k of ['t', 'a', 'b']) if (b[k] != null) s.push(b[k]); }
   return s;
 }
-const want = { 'index.html': [POLICY_TITLE, POLICY_LEAD, ...strings(POLICY)], 'terms.html': [TERMS_TITLE, TERMS_LEAD, ...strings(TERMS)] };
+const want = { 'index.html': [POLICY_TITLE, POLICY_LEAD, ...POLICY_NOTICE, ...strings(POLICY)], 'terms.html': [TERMS_TITLE, TERMS_LEAD, ...strings(TERMS)] };
 for (const [f, list] of Object.entries(want)) {
-  const miss = list.filter((t) => !outputs[f].includes(esc(t)));
+  const plain = outputs[f].replace(/<span class="nw">|<\/span>/g, '');
+  const miss = list.filter((t) => !plain.includes(esc(t)));
   if (miss.length) throw new Error(`${f} 에 정본 글자 ${miss.length}줄이 없다: ${miss[0]}`);
 }
 // 내부 표식이 새면 안 된다(옛 공개본의 «[정식 출시 전 법무 검토 · R2]» 류).
